@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#3b5b7a"><meta name="description" content="Inventario personal de libros por voz e ISBN."><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><title>Mi Biblioteca</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light dark;--accent:#3b5b7a;--accent-soft:#e6ecf2;--bg:#f4f5f7;--ink:#1c1f23;--muted:#6b7280;--line:#e1e3e8;--danger:#9b3b3b;--danger-soft:#f7e9e9;--amber:#fdf6e3;--card:#ffffff;--font-scale:1;--shadow:0 1px 3px #0000000d}
+@media(prefers-color-scheme:dark){:root{--accent:#8fb0cc;--accent-soft:#243040;--bg:#121417;--ink:#e6e8eb;--muted:#9aa1ab;--line:#272b31;--danger:#e08b8b;--danger-soft:#3a2525;--amber:#332e1f;--card:#1a1d21;--shadow:0 1px 3px #00000040}}
+body.dark{--accent:#8fb0cc;--accent-soft:#243040;--bg:#121417;--ink:#e6e8eb;--muted:#9aa1ab;--line:#272b31;--danger:#e08b8b;--danger-soft:#3a2525;--amber:#332e1f;--card:#1a1d21;--shadow:0 1px 3px #00000040}
+body.light{--accent:#3b5b7a;--accent-soft:#e6ecf2;--bg:#f4f5f7;--ink:#1c1f23;--muted:#6b7280;--line:#e1e3e8;--danger:#9b3b3b;--danger-soft:#f7e9e9;--amber:#fdf6e3;--card:#ffffff;--shadow:0 1px 3px #0000000d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:calc(16px * var(--font-scale));-webkit-font-smoothing:antialiased}
+header{background:var(--card);color:var(--ink);padding:22px 18px 18px;position:relative;border-bottom:1px solid var(--line)}
+header h1{margin:0;font-size:1.5rem;font-weight:750;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+header p{margin:4px 0 0;color:var(--muted);font-size:.9rem}
+.header-icon{width:26px;height:26px;flex:0 0 auto;color:var(--accent)}
+.header-tools{position:absolute;top:16px;right:14px;display:flex;gap:6px}
+.header-tools button{background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:6px 9px;font-weight:600;cursor:pointer;font-size:.82rem;transition:background .15s}
+.header-tools button:hover{background:var(--accent-soft)}
+main{max-width:900px;margin:auto;padding:16px;padding-bottom:96px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+h2{font-size:1.02rem;margin:0 0 14px;font-weight:700;letter-spacing:-.005em}
+label{display:block;font-weight:600;font-size:.88rem;margin:12px 0 6px;color:var(--ink)}
+input,select,textarea{width:100%;min-height:46px;border:1px solid var(--line);border-radius:9px;padding:10px 12px;font:inherit;background:var(--card);color:var(--ink);transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+textarea{min-height:70px;resize:vertical}
+button{border:0;border-radius:9px;padding:11px 14px;font:inherit;font-weight:600;cursor:pointer;min-height:44px;transition:filter .15s,background .15s}
+button:hover{filter:brightness(.97)}
+.primary{background:var(--accent);color:#fff;width:100%;margin-top:16px}
+.secondary{background:var(--accent-soft);color:var(--accent)}
+.danger{background:var(--danger-soft);color:var(--danger)}
+.hint{font-size:.8rem;color:var(--muted);margin:8px 0 0;line-height:1.45}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.full{grid-column:1/-1}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 12px;box-shadow:var(--shadow)}
+.stat strong{display:block;font-size:1.5rem;color:var(--accent);font-weight:750;letter-spacing:-.02em}
+.stat span{font-size:.75rem;color:var(--muted)}
+.filters{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:8px;margin:10px 0}
+.filters-extra{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 10px}
+.viewbar{display:flex;gap:7px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:12px 0}
+.viewbar .buttons{display:flex;gap:6px}
+.viewbar button[aria-pressed=true]{background:var(--accent);color:#fff}
+.count{color:var(--muted);font-size:.84rem}
+.book-list{display:flex;flex-direction:column;gap:9px}
+.book-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.book{border:1px solid var(--line);border-radius:12px;padding:13px;background:var(--card);min-width:0;transition:border-color .15s}
+.book:hover{border-color:var(--accent-soft)}
+.book-row{display:flex;gap:12px}
+.cover{width:64px;height:94px;object-fit:contain;border-radius:6px;background:var(--bg);flex:0 0 auto}
+.cover-placeholder{display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:var(--muted)}
+.book-body{min-width:0;flex:1}
+.book-title{font-weight:700;font-size:1rem;overflow-wrap:anywhere;letter-spacing:-.005em;font-family:'Lora',Georgia,serif}
+.book-meta{color:var(--muted);margin-top:3px;font-size:.85rem;overflow-wrap:anywhere}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.chip{border-radius:99px;background:var(--accent-soft);color:var(--accent);padding:3px 9px;font-size:.73rem;font-weight:600}
+.comment{font-size:.83rem;color:var(--muted);margin-top:8px;padding:8px 10px;background:var(--bg);border-radius:8px;overflow-wrap:anywhere;line-height:1.4}
+.book-actions{display:flex;gap:6px;margin-top:10px;align-items:center}
+.book-actions button{flex:0 0 auto;min-height:36px;padding:6px 10px;font-size:.85rem}
+.book-actions select{min-height:36px;padding:5px 8px;font-size:.82rem;flex:1}
+.grid-card .cover{width:100%;height:170px;object-fit:contain;background:var(--bg)}
+.grid-card .cover-placeholder{height:170px;width:100%;border-radius:8px}
+.grid-card .book-title{margin-top:9px}
+.empty{color:var(--muted);text-align:center;padding:28px 8px}
+.empty-guided{text-align:center;padding:30px 16px}
+.empty-guided h3{margin:0 0 6px;font-size:1.1rem;font-family:'Lora',Georgia,serif}
+.empty-guided p{color:var(--muted);font-size:.9rem;margin:0 0 18px}
+.empty-guided ol{text-align:left;max-width:320px;margin:0 auto 20px;padding-left:20px;color:var(--muted);font-size:.88rem;line-height:1.7}
+.empty-guided ol strong{color:var(--ink)}
+.empty-guided .primary{max-width:280px;margin:0 auto;display:block}
+.notice{padding:10px 12px;background:var(--amber);border-radius:9px;font-size:.86rem;margin-top:10px}
+.quick-save-bar{margin-top:10px;padding:10px;background:var(--accent-soft);border-radius:9px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.quick-save-bar button{flex:1;min-height:40px}
+.hidden{display:none!important}
+footer{text-align:center;color:var(--muted);font-size:.78rem;padding:0 20px 24px}
+footer small{display:block;margin-top:4px;opacity:.85}
+video{width:100%;max-height:300px;background:#000;border-radius:10px}
+.scanner-wrap{position:relative}
+.scanner-guide{position:absolute;inset:18% 10%;border:2px dashed #ffffffcc;border-radius:10px;pointer-events:none;box-shadow:0 0 0 9999px #00000055}
+.fab{position:fixed;bottom:22px;right:22px;width:56px;height:56px;border-radius:50%;background:var(--accent);color:#fff;font-size:1.7rem;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px #00000030;z-index:50;cursor:pointer;border:0;transition:transform .15s}
+.fab:hover{transform:scale(1.05)}
+.toast{position:fixed;bottom:92px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:11px 15px;border-radius:10px;display:flex;gap:14px;align-items:center;z-index:100;box-shadow:0 6px 20px #00000040;max-width:92vw;font-size:.9rem}
+.toast button{background:var(--accent);color:#fff;min-height:auto;padding:6px 10px;font-size:.82rem}
+.stars{color:#c9a227;font-size:.88rem;letter-spacing:1px;margin-top:4px}
+.mic-btn{width:auto;min-height:32px;padding:3px 9px;font-size:.8rem;background:var(--bg);color:var(--muted);border:1px solid var(--line);border-radius:7px;margin-left:6px}
+details.backup{margin-top:14px;border:1px solid var(--line);border-radius:10px;padding:0;background:var(--bg)}
+details.backup summary{cursor:pointer;padding:12px 14px;font-weight:600;font-size:.9rem;color:var(--ink);list-style:none;user-select:none}
+details.backup summary::-webkit-details-marker{display:none}
+details.backup summary::before{content:"▸ ";color:var(--muted);display:inline-block;transition:transform .15s}
+details.backup[open] summary::before{transform:rotate(90deg)}
+details.backup .backup-body{padding:0 14px 14px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+details.backup .backup-body button{font-size:.85rem}
+.cover-actions{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.cover-actions button{flex:1;min-width:120px;font-size:.85rem}
+@media(max-width:560px){main{padding:10px}.form-grid{grid-template-columns:1fr}.filters{grid-template-columns:1fr 1fr}.filters input{grid-column:1/-1}.filters-extra{grid-template-columns:1fr 1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.book-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-card .cover,.grid-card .cover-placeholder{height:135px}details.backup .backup-body{grid-template-columns:1fr}}
+@media(min-width:700px){.book-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+</style></head>
+<body>
+<header>
+  <h1><svg class="header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Mi Biblioteca</h1>
+  <p>Tu inventario personal, sencillo y privado.</p>
+  <div class="header-tools">
+    <button id="fontMinus" title="Reducir letra">A-</button>
+    <button id="fontPlus" title="Aumentar letra">A+</button>
+    <button id="themeToggle" title="Cambiar tema">🌓</button>
+  </div>
+</header>
+<main>
+<section class="stats" aria-label="Estadísticas">
+  <div class="stat"><strong id="statTotal">0</strong><span>Libros en total</span></div>
+  <div class="stat"><strong id="statRead">0</strong><span>Leídos</span></div>
+  <div class="stat"><strong id="statPending">0</strong><span>Pendientes</span></div>
+  <div class="stat"><strong id="statPaused">0</strong><span>En pausa</span></div>
+</section>
+<section class="card"><h2 id="formTitle">Añadir un libro</h2><form id="bookForm"><input type="hidden" id="bookId"><div class="form-grid">
+<div class="full"><label for="title">Título * <button type="button" class="mic-btn" data-mic="title">🎤 Dictar</button></label><input id="title" autocomplete="off" required placeholder="Puedes dictarlo con el micrófono del teclado"><button class="secondary" type="button" id="scanIsbn" style="width:100%;margin-top:8px">📷 Escanear ISBN con la cámara</button><div id="scannerPanel" class="hidden" style="margin-top:10px"><div class="scanner-wrap"><video id="scannerVideo" playsinline autoplay muted></video><div class="scanner-guide"></div></div><p class="hint" id="scannerMessage">Apunta al código de barras ISBN de la contraportada.</p><button class="secondary" type="button" id="torchBtn" style="width:100%;margin-top:6px" hidden>💡 Linterna</button><button class="danger" type="button" id="stopScanner" style="width:100%;margin-top:6px">Cerrar cámara</button></div></div>
+<div><label for="author">Autor <button type="button" class="mic-btn" data-mic="author">🎤</button></label><input id="author" autocomplete="off" placeholder="Nombre del autor"></div><div><label for="isbn">ISBN (opcional)</label><input id="isbn" inputmode="numeric" autocomplete="off" placeholder="978…"><button class="secondary" type="button" id="lookupIsbn" style="width:100%;margin-top:6px">Buscar datos por ISBN</button><p class="hint" id="isbnLookupMessage" role="status" aria-live="polite">Se consultarán varios catálogos si el libro no aparece a la primera.</p></div>
+<div><label for="status">Estado</label><select id="status"><option>Pendiente de leer</option><option>Leyendo</option><option>Leído</option><option>En pausa</option></select></div><div><label for="rating">Valoración</label><select id="rating"><option value="0">Sin valorar</option><option value="1">★ 1</option><option value="2">★★ 2</option><option value="3">★★★ 3</option><option value="4">★★★★ 4</option><option value="5">★★★★★ 5</option></select></div>
+<div class="full" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+  <div><label for="shelfNum">Estantería</label><select id="shelfNum"><option value="">Sin asignar</option><option value="1">Estantería 1</option><option value="2">Estantería 2</option><option value="3">Estantería 3</option><option value="4">Estantería 4</option><option value="5">Estantería 5</option></select></div>
+  <div><label for="rowNum">Altura / Balda</label><select id="rowNum"><option value="">Sin asignar</option><option value="1">Balda 1 (arriba)</option><option value="2">Balda 2</option><option value="3">Balda 3</option><option value="4">Balda 4</option><option value="5">Balda 5 (abajo)</option></select></div>
+</div>
+<div class="full"><label>Portada</label><div class="cover-actions"><button class="secondary" type="button" id="takePhotoBtn">📸 Hacer foto a la portada</button><button class="secondary" type="button" id="removeCoverBtn">🗑️ Quitar portada</button></div><input type="file" id="coverPhotoInput" accept="image/*" capture="environment" hidden><p class="hint" id="coverHint">Puedes hacer una foto a la portada del libro. Se guardará en este dispositivo.</p></div>
+<div class="full"><label for="comments">Comentarios</label><textarea id="comments" placeholder="Notas, opiniones, a quién se lo recomendarías…"></textarea></div>
+</div><p class="hint">En Android, toca un campo y usa el micrófono del teclado para dictar, o pulsa el botón 🎤. Revisa los datos antes de guardar.</p><div id="duplicateNotice" class="notice hidden"></div><div id="quickSaveBar" class="quick-save-bar hidden"><button class="primary" type="button" id="quickSaveBtn" style="margin-top:0">⚡ Guardar rápido</button><span class="hint" style="margin:0;flex:1;min-width:120px">Guarda con estado «Pendiente» y sin ubicación. Luego puedes editarlo.</span></div><button class="primary" type="submit" id="saveBtn">Guardar libro</button><button class="secondary hidden" type="button" id="cancelEdit" style="width:100%;margin-top:8px">Cancelar edición</button></form></section>
+<section class="card"><h2>Mi colección</h2><div class="filters"><input id="search" placeholder="Buscar título, autor, ISBN, comentarios…" aria-label="Buscar"><select id="statusFilter" aria-label="Filtrar por estado"><option value="">Todos los estados</option><option>Pendiente de leer</option><option>Leyendo</option><option>Leído</option><option>En pausa</option></select><select id="sortBy" aria-label="Ordenar"><option value="title">Título A–Z</option><option value="author">Autor A–Z</option><option value="location">Ubicación A–Z</option><option value="newest">Añadidos recientemente</option><option value="rating">Mejor valorados</option></select></div><div class="filters-extra"><select id="shelfFilter" aria-label="Filtrar por estantería"><option value="">Todas las estanterías</option><option value="__none__">Sin asignar</option><option value="1">Estantería 1</option><option value="2">Estantería 2</option><option value="3">Estantería 3</option><option value="4">Estantería 4</option><option value="5">Estantería 5</option></select><select id="rowFilter" aria-label="Filtrar por balda"><option value="">Todas las baldas</option><option value="__none__">Sin asignar</option><option value="1">Balda 1</option><option value="2">Balda 2</option><option value="3">Balda 3</option><option value="4">Balda 4</option><option value="5">Balda 5</option></select></div><div class="viewbar"><span class="count" id="count">0 libros</span><div class="buttons"><button class="secondary" id="listView" type="button" aria-pressed="true">☷ Lista</button><button class="secondary" id="gridView" type="button" aria-pressed="false">▦ Portadas</button></div></div><div id="bookList" class="book-list"></div>
+<details class="backup"><summary>⚙️ Copias de seguridad</summary><div class="backup-body">
+<button class="secondary" id="exportXlsx" type="button">📊 Exportar Excel</button>
+<button class="secondary" id="exportJson" type="button">💾 Crear copia JSON</button>
+<button class="secondary" id="shareJson" type="button">📤 Compartir copia JSON</button>
+<button class="secondary" id="importJsonBtn" type="button">📥 Restaurar / importar</button>
+<button class="secondary" id="restoreAuto" type="button">🕓 Restaurar copia automática</button>
+<button class="secondary" id="installBtn" type="button" hidden>📲 Instalar app</button>
+<input type="file" id="importFile" accept="application/json,.json,text/csv,.csv" hidden>
+</div><p class="hint" style="padding:0 14px 14px">Tus datos se guardan solo en este dispositivo. Se crea una copia automática antes de cada guardado.</p></details>
+</section>
+</main>
+<button class="fab" id="fabAdd" title="Añadir libro">＋</button>
+<footer>Mi Biblioteca · Almacenamiento local y privado.<small id="lastBackup">Hecho con cariño para mi biblioteca.</small></footer>
+<script src="https://unpkg.com/@zxing/browser@0.1.5/umd/zxing-browser.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+<script>
+'use strict';
+const STORAGE_KEY='mi-biblioteca-libros-v1';
+const BACKUP_KEY='mi-biblioteca-backup-auto';
+const BACKUP_KEY_2='mi-biblioteca-backup-auto-2';
+const ISBN_CACHE_KEY='mi-biblioteca-isbn-cache';
+const SETTINGS_KEY='mi-biblioteca-settings';
+const UNSAVED_KEY='mi-biblioteca-unsaved-changes';
+const LAST_EXPORT_KEY='mi-biblioteca-last-manual-export';
+const $=id=>document.getElementById(id);
+let books=[];let deferredInstallPrompt=null;let currentView='list';let codeReader=null;let scannerControls=null;let scanBusy=false;let scannedCover='';
+let recognition=null;
+let currentStream=null;let torchOn=false;
+let saveCount=0;
+
+/* ---------- Ajustes ---------- */
+function loadSettings(){try{const s=JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}');if(s.theme)document.body.classList.add(s.theme);if(s.fontScale)document.documentElement.style.setProperty('--font-scale',s.fontScale);}catch(e){}}
+function saveSettings(){localStorage.setItem(SETTINGS_KEY,JSON.stringify({theme:document.body.classList.contains('dark')?'dark':document.body.classList.contains('light')?'light':'',fontScale:getComputedStyle(document.documentElement).getPropertyValue('--font-scale').trim()||'1'}));}
+$('themeToggle').addEventListener('click',()=>{const isDark=document.body.classList.contains('dark')||(!document.body.classList.contains('light')&&matchMedia('(prefers-color-scheme:dark)').matches);document.body.classList.remove('dark','light');document.body.classList.add(isDark?'light':'dark');saveSettings();});
+$('fontPlus').addEventListener('click',()=>{const v=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--font-scale'))||1;document.documentElement.style.setProperty('--font-scale',Math.min(1.5,v+0.1));saveSettings();});
+$('fontMinus').addEventListener('click',()=>{const v=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--font-scale'))||1;document.documentElement.style.setProperty('--font-scale',Math.max(0.8,v-0.1));saveSettings();});
+
+/* ---------- Utilidades ---------- */
+function safeId(){return (crypto.randomUUID?crypto.randomUUID():String(Date.now())+'-'+Math.random().toString(36).slice(2));}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function norm(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLocal
