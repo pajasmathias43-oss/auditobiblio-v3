@@ -1,4 +1,4 @@
-const CACHE = "mi-biblioteca-v1900";
+const CACHE = "mi-biblioteca-v1910";
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 // ... resto igual
 self.addEventListener("install", event => {
